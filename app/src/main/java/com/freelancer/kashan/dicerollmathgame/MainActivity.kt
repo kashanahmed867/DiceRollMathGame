@@ -45,13 +45,25 @@ class MainActivity : AppCompatActivity() {
         rootView = getWindow().getDecorView().getRootView()
 
         val rollButton: Button = findViewById(R.id.roll_button)
-        rollButton.setOnClickListener { rollDice() }
+        rollButton.setOnClickListener { checkAndRoll() }
         rollDice()
     }
 
-    private fun rollDice() {
-        checkAnswer()
+    private fun checkAndRoll() {
+        val isValidAnswer : Boolean = checkAnswer()
 
+        if (isValidAnswer)
+        {
+            rollDice()
+            findTotal()
+        }
+        else
+        {
+            Snackbar.make(rootView, "Valid Answer is Required", Snackbar.LENGTH_LONG).show()
+        }
+    }
+
+    private fun rollDice() {
         diceImage1.setImageResource(getRandomDiceImage(1))
         diceImage2.setImageResource(getRandomDiceImage(2))
         diceImage3.setImageResource(getRandomDiceImage(3))
@@ -60,8 +72,6 @@ class MainActivity : AppCompatActivity() {
         sign_plus2.setImageResource(R.drawable.plus_sign)
         sign_multiply.setImageResource(R.drawable.mutiply_sign)
         sign_equal.setImageResource(R.drawable.equal_sign)
-
-        findTotal()
     }
 
     private fun getRandomDiceImage(dice_var: Int): Int {
@@ -87,12 +97,14 @@ class MainActivity : AppCompatActivity() {
         return drawelResource
     }
 
-    private fun checkAnswer() {
+    private fun checkAnswer() : Boolean {
         try{
             totalValue = editText.text.toString().toInt()
         }
         catch (e: Exception)
-        {  }
+        {
+            return false
+        }
 
         if (totalValue != -1)
         {
@@ -108,6 +120,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
         editText.setText("")
+
+        return true
     }
 
     private fun findTotal() {
