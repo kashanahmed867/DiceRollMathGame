@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import java.util.Random
 
 class MainActivity : AppCompatActivity() {
@@ -19,10 +20,14 @@ class MainActivity : AppCompatActivity() {
     lateinit var sign_plus2 : ImageView
     lateinit var sign_multiply : ImageView
     lateinit var sign_equal : ImageView
+    lateinit var txtScore : TextView
+    lateinit var txtLife : TextView
     lateinit var editText: EditText
     lateinit var rootView : View
 
     var totalValue = -1
+    var life = 3
+    var score = 0
     var totalCalc = 0
     var dice1_val = 0
     var dice2_val = 0
@@ -41,6 +46,8 @@ class MainActivity : AppCompatActivity() {
         sign_plus2 = findViewById(R.id.sign_image_plus2)
         sign_multiply = findViewById(R.id.sign_image_multiply)
         sign_equal = findViewById(R.id.sign_image_equal)
+        txtScore = findViewById(R.id.textScore)
+        txtLife = findViewById(R.id.textLife)
         editText = findViewById(R.id.editText)
         rootView = getWindow().getDecorView().getRootView()
 
@@ -111,12 +118,24 @@ class MainActivity : AppCompatActivity() {
             if (totalValue == totalCalc)
             {
                 //Correct Answer
+                score++
+                txtScore.setText(score.toString())
                 Snackbar.make(rootView, "Correct Answer", Snackbar.LENGTH_LONG).show()
             }
             else
             {
                 //Incorrect Answer
-                Snackbar.make(rootView, "Incorrect Answer", Snackbar.LENGTH_LONG).show()
+                if (life > 0)
+                {
+                    life--
+                    txtLife.setText(life.toString())
+                    Snackbar.make(rootView, "Incorrect Answer", Snackbar.LENGTH_LONG).show()
+                }
+                else
+                {
+                    finish()
+                    moveTaskToBack(true)
+                }
             }
         }
         editText.setText("")
