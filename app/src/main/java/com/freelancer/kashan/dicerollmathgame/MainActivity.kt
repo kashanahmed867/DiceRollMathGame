@@ -1,7 +1,9 @@
 package com.freelancer.kashan.dicerollmathgame
 
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -18,9 +20,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var sign_multiply : ImageView
     lateinit var sign_equal : ImageView
     lateinit var editText: EditText
+    lateinit var rootView : View
 
-    var totalCalc = 0
     var totalValue = -1
+    var totalCalc = 0
     var dice1_val = 0
     var dice2_val = 0
     var dice3_val = 0
@@ -29,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val rollButton: Button = findViewById(R.id.roll_button)
+
         diceImage1 = findViewById(R.id.dice_image1)
         diceImage2 = findViewById(R.id.dice_image2)
         diceImage3 = findViewById(R.id.dice_image3)
@@ -39,38 +42,39 @@ class MainActivity : AppCompatActivity() {
         sign_multiply = findViewById(R.id.sign_image_multiply)
         sign_equal = findViewById(R.id.sign_image_equal)
         editText = findViewById(R.id.editText)
+        rootView = getWindow().getDecorView().getRootView()
+
+        val rollButton: Button = findViewById(R.id.roll_button)
         rollButton.setOnClickListener { rollDice() }
         rollDice()
     }
 
-    private fun rollDice(){
-        if (totalValue != -1)
-        {
-            if (totalValue == totalCalc)
-            {
-                //Correct Answer
+    private fun rollDice() {
+        checkAnswer()
 
-            }
-            else
-            {
-                //Incorrect Answer
-
-            }
-        }
-
-        diceImage1.setImageResource(getRandomDiceImage())
-        diceImage2.setImageResource(getRandomDiceImage())
-        diceImage3.setImageResource(getRandomDiceImage())
-        diceImage4.setImageResource(getRandomDiceImage())
+        diceImage1.setImageResource(getRandomDiceImage(1))
+        diceImage2.setImageResource(getRandomDiceImage(2))
+        diceImage3.setImageResource(getRandomDiceImage(3))
+        diceImage4.setImageResource(getRandomDiceImage(4))
         sign_plus.setImageResource(R.drawable.plus_sign)
         sign_plus2.setImageResource(R.drawable.plus_sign)
         sign_multiply.setImageResource(R.drawable.mutiply_sign)
         sign_equal.setImageResource(R.drawable.equal_sign)
+
+        findTotal()
     }
 
-    private fun getRandomDiceImage(): Int{
+    private fun getRandomDiceImage(dice_var: Int): Int {
         fun IntRange.random() = Random().nextInt((endInclusive + 1) - start) + start
         val randomInt = (1..6).random()
+
+        when(dice_var)
+        {
+            1 -> dice1_val = randomInt
+            2 -> dice2_val = randomInt
+            3 -> dice3_val = randomInt
+            4 -> dice4_val = randomInt
+        }
 
         val drawelResource = when(randomInt){
             1 -> R.drawable.dice1
@@ -83,4 +87,30 @@ class MainActivity : AppCompatActivity() {
         return drawelResource
     }
 
+    private fun checkAnswer() {
+        try{
+            totalValue = editText.text.toString().toInt()
+        }
+        catch (e: Exception)
+        {  }
+
+        if (totalValue != -1)
+        {
+            if (totalValue == totalCalc)
+            {
+                //Correct Answer
+                Snackbar.make(rootView, "Correct Answer", Snackbar.LENGTH_LONG).show()
+            }
+            else
+            {
+                //Incorrect Answer
+                Snackbar.make(rootView, "Incorrect Answer", Snackbar.LENGTH_LONG).show()
+            }
+        }
+        editText.setText("")
+    }
+
+    private fun findTotal() {
+        totalCalc = (dice1_val + dice2_val) * (dice3_val + dice4_val)
+    }
 }
